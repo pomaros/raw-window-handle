@@ -35,6 +35,7 @@ extern crate std;
 
 mod android;
 mod appkit;
+mod aros;
 mod borrowed;
 mod haiku;
 mod ohos;
@@ -46,6 +47,7 @@ mod windows;
 
 pub use android::{AndroidDisplayHandle, AndroidNdkWindowHandle};
 pub use appkit::{AppKitDisplayHandle, AppKitWindowHandle};
+pub use aros::{ArosDisplayHandle, ArosWindowHandle};
 pub use borrowed::{DisplayHandle, HasDisplayHandle, HasWindowHandle, WindowHandle};
 pub use haiku::{HaikuDisplayHandle, HaikuWindowHandle};
 pub use ohos::{OhosDisplayHandle, OhosNdkWindowHandle};
@@ -111,6 +113,8 @@ unsafe impl<T: HasWindowHandle + ?Sized> HasRawWindowHandle for T {
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum RawWindowHandle {
+    /// An Intuition window on AROS (`target_os = "aros"`).
+    Aros(ArosWindowHandle),
     /// A raw window handle for UIKit (Apple's non-macOS windowing library).
     ///
     /// ## Availability Hints
@@ -264,6 +268,8 @@ unsafe impl<T: HasDisplayHandle + ?Sized> HasRawDisplayHandle for T {
 #[non_exhaustive]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum RawDisplayHandle {
+    /// The native Intuition display on AROS (`target_os = "aros"`).
+    Aros(ArosDisplayHandle),
     /// A raw display handle for UIKit (Apple's non-macOS windowing library).
     ///
     /// ## Availability Hints
@@ -413,6 +419,7 @@ from_impl!(RawDisplayHandle, Windows, WindowsDisplayHandle);
 from_impl!(RawDisplayHandle, Web, WebDisplayHandle);
 from_impl!(RawDisplayHandle, Android, AndroidDisplayHandle);
 from_impl!(RawDisplayHandle, Haiku, HaikuDisplayHandle);
+from_impl!(RawDisplayHandle, Aros, ArosDisplayHandle);
 
 from_impl!(RawWindowHandle, UiKit, UiKitWindowHandle);
 from_impl!(RawWindowHandle, AppKit, AppKitWindowHandle);
@@ -434,6 +441,7 @@ from_impl!(
 );
 from_impl!(RawWindowHandle, AndroidNdk, AndroidNdkWindowHandle);
 from_impl!(RawWindowHandle, Haiku, HaikuWindowHandle);
+from_impl!(RawWindowHandle, Aros, ArosWindowHandle);
 
 #[cfg(test)]
 mod tests {
@@ -468,6 +476,7 @@ mod tests {
         assert_impl_all!(WebDisplayHandle: Send, Sync);
         assert_impl_all!(AndroidDisplayHandle: Send, Sync);
         assert_impl_all!(HaikuDisplayHandle: Send, Sync);
+        assert_impl_all!(ArosDisplayHandle: Send, Sync);
 
         // TODO: Unsure if some of these should not actually be Send + Sync
         assert_not_impl_any!(UiKitWindowHandle: Send, Sync);
@@ -486,6 +495,7 @@ mod tests {
         assert_not_impl_any!(WebOffscreenCanvasWindowHandle: Send, Sync);
         assert_not_impl_any!(AndroidNdkWindowHandle: Send, Sync);
         assert_not_impl_any!(HaikuWindowHandle: Send, Sync);
+        assert_not_impl_any!(ArosWindowHandle: Send, Sync);
     }
 
     #[allow(deprecated, unused)]

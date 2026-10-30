@@ -1,3 +1,16 @@
+# AROS native window handles
+
+This PomAROS fork adds `ArosWindowHandle` and `ArosDisplayHandle` to
+raw-window-handle 0.6.2 (upstream commit 5fda8e8420b069368e9450e70c2869e32dcdffc1).
+The window contains the actual Intuition `struct Window *`; it borrows the
+window and never owns or closes it. GPU surfaces must be dropped before the
+Intuition window closes. The display selects the native EGL display.
+
+AROS is represented explicitly, without substituting an X11 or Wayland handle.
+The original upstream documentation follows.
+
+---
+
 # `raw-window-handle`: A common windowing interoperability library for Rust
 
 [![Crates.io](https://img.shields.io/crates/v/raw-window-handle.svg?maxAge=2592000)](https://crates.io/crates/raw-window-handle)
